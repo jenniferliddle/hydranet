@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for graph in graphs %}
+	<br/>
+	<fieldset><legend>{{ graph['Title'] }}</legend>
+        <div class='hydranet_chart'>
+            <svg data-id="{{ graph['Graph_ID'] }}" data-xtitle="{{ graph['TitleX'] }}" data-ytitle="{{ graph['TitleY1'] }}">
+        </div>
+	</fieldset>
+	<br/>
+
+{% endfor %}
+
+<script language="javascript" type="text/javascript" src="/static/js/drawCharts.js"></script>
+{% endblock %}

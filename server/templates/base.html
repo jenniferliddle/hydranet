@@ -1,0 +1,52 @@
+<!--
+	graph.tt
+
+	Template for showing graphs
+
+	Author: Jennifer Liddle <jennifer@jsquared.co.uk>
+
+	$Id$
+-->
+
+<html>
+  <head>
+    <script language="javascript" type="text/javascript" src="/static/js/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/d3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/nv.d3.js"></script>
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/nv.d3.css">
+    <title>{{ title }}</title>
+  </head>
+  <body><div class="wrapper">
+    <div class="header">
+    <!-- show the logos -->
+    <div style="float: left;">
+        <img src=/static/images/hydranet.jpg>
+    </div>
+    <div style="float: right;">
+        <a href=http://www.jsquared.co.uk><img src=/static/images/jsquared.jpg></a>
+    </div>
+    <div style="clear: both;"></div>
+
+    <hr style="height: 3px; background-color: grey; width=95%;">
+    <div style="background-color: rgb(203, 220, 237); height: 18px;">
+        <div style="float: left;">Welcome {{ session.username }}</div>
+        <div style="float: right;"><a href="/logout">Logout&nbsp;</a></div>
+    </div>
+    <div style="clear: both;"></div>
+    <hr style="height: 3px; background-color: grey;">
+
+    </div> <!-- end of header class -->
+
+    <div id="content">{% block content %}{% endblock %}</div>
+
+    <div class="push"></div></div>
+    <div class="footer">
+      <hr>
+      <div class="copyright">
+        HydraNet : &copy; Copyright 2017 J-Squared Limited
+      </div>
+    </div> <!-- end of footer div -->
+  </body>
+</html>
+

@@ -1,0 +1,72 @@
+/*
+
+ $Id$
+
+*/
+
+/* 
+ Sticky Footer
+ Curtesy of http://ryanfait.com/resources/footer-stick-to-bottom-of-page/
+*/
+
+* {
+	margin: 0;
+}
+html, body {
+	height: 100%;
+	padding-right: 1em;
+	padding-left: 1em;
+}
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -2em;
+}
+.footer, .push {
+	height: 2em;
+}
+
+.footer hr {
+	color: green;
+	background-color: red;
+	width: 95%;
+	height: 3px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.ylabel {
+	transform:rotate(270deg);
+	-o-transform:rotate(270deg);
+	-moz-transform:rotate(270deg);
+	-webkit-transform:rotate(270deg);
+}
+
+/****** end of Sticky Footer **************/
+
+legend {
+	background-color:#F4F8FD;
+	border:1px solid #83A4C3;
+	color:#074987;
+	font-family:Arial,Helvetica,Sans-Serif;
+	font-weight:bolder;
+	margin-top:0px;
+	padding:2px 4px;
+	text-decoration:none;
+}
+
+fieldset {
+	border: 1px solid #83A4C3;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-topright: 20px;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+}
+
+.error {
+	color: red;
+}
+
