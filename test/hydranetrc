@@ -1,0 +1,14 @@
+[Database_rw]
+host: host.name.org
+user: hydranet_username
+password: password
+database: Hydranet
+
+[Database_test]
+host: test.host
+user: test_user
+password: test
+database: Hydranet_Test
+
+[Main]
+
