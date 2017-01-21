@@ -6,7 +6,7 @@
 import ConfigParser
 import os
 
-filePaths = [
+FILEPATHS = [
     os.path.expanduser('test/hydranetrc'),
     os.path.expanduser('/etc/hydranetrc'),
     os.path.expanduser('~/hydranetrc'),
@@ -17,6 +17,6 @@ class Config(ConfigParser.ConfigParser):
 
     def __init__(self):
         ConfigParser.ConfigParser.__init__(self)
-        self.read(filePaths)
+        self.read(FILEPATHS)
 
 

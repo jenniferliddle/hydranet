@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" 
+"""
 
 Hydranet.relay
 
@@ -21,11 +21,11 @@ class Relay(object):
         self.readStateFile()
 
     def readStateFile(self):
-        f = open(self.DATAFILE,"r")
-        for line in f.readlines():
-            (k,v) = line.strip().split(',')
-            self.relays[k] = v
-        f.close()
+        fh = open(self.DATAFILE,"r")
+        for line in fh.readlines():
+            (key,val) = line.strip().split(',')
+            self.relays[key] = val
+        fh.close()
 
 
 if __name__ == "__main__":

@@ -6,14 +6,12 @@
 from urllib import urlencode
 from urllib2 import urlopen, Request
 from datetime import datetime
-from sys import stderr
-import ConfigParser
 
 # PROPERTIES
-ip = "192.168.2.166"
-update_path = "/cgi/update"
-date_format = "%d-%m-%Y %H:%M:%S"
-debug = False
+IP = "192.168.2.166"
+UPDATE_PATH = "/cgi/update"
+DATE_FORMAT = "%d-%m-%Y %H:%M:%S"
+DEBUG = False
 
 """ Update Hydranet. Parameters:
 
@@ -22,18 +20,18 @@ debug = False
 		echo - if True, echo update data
 """
 def update(sensor, value, echo=False):
-	timestamp = datetime.now().strftime(date_format)
-	data = { "sensor": sensor, "value": value, "date": timestamp, "key": 101 }
+    timestamp = datetime.now().strftime(DATE_FORMAT)
+    data = { "sensor": sensor, "value": value, "date": timestamp, "key": 101 }
 
-	if echo or debug:
-		print "%s: %s at %s" % (sensor, value, timestamp)
+    if echo or DEBUG:
+        print "%s: %s at %s" % (sensor, value, timestamp)
 
-	# build GET request and echo URL
-	req = Request("http://%s%s?%s" % (ip, update_path, urlencode(data)))
-	if debug:
-		print "GET", req.get_full_url()
+    # build GET request and echo URL
+    req = Request("http://%s%s?%s" % (IP, UPDATE_PATH, urlencode(data)))
+    if DEBUG:
+        print "GET", req.get_full_url()
 
-	# do the GET, ignore the (empty) response
-	if not debug:
-		urlopen(req).read()
+    # do the GET, ignore the (empty) response
+    if not DEBUG:
+        urlopen(req).read()
 

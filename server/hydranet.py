@@ -1,12 +1,12 @@
 from __future__ import print_function
-from flask import Flask, g, session, redirect, url_for, escape, request, render_template, jsonify
-from flask.json import JSONEncoder, dumps
-from flaskext.mysql import MySQL
-from Hydranet.db import DB, User, Customer, Graph, Data
+import logging
 import ConfigParser
 from os.path import expanduser
 import sys
 import re
+from flask import Flask, g, session, redirect, url_for, request, render_template, jsonify
+from flask.json import JSONEncoder
+from Hydranet.db import DB, User, Customer, Graph, Data
 
 app = Flask(__name__, template_folder='/var/www/hydranet/templates', static_folder='/var/www/hydranet/static')
 
@@ -18,7 +18,6 @@ class CustomJSONEncoder(JSONEncoder):
         else:
             JSONEncoder.default(self, obj)
 
-import logging
 logging.basicConfig(stream=sys.stderr)
 
 config = ConfigParser.ConfigParser()
@@ -50,7 +49,7 @@ def teardown_request(exception):
 @app.route('/')
 def index():
     if 'username' in session:
-		return redirect(url_for('graph'))
+        return redirect(url_for('graph'))
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -59,7 +58,7 @@ def login():
     if request.method == 'POST':
         u = User(g.db)
         msg = 'Invalid username or password'
-        if (u.load(request.form['username']) == None):
+        if u.load(request.form['username']) is None:
             msg = 'no such user'
         else:
             if u.validate(request.form['password']):
@@ -80,7 +79,7 @@ def logout():
 
 @app.route('/graph', methods=['GET', 'POST'])
 def graph():
-    if not 'username' in session:
+    if 'username' not in session:
         return redirect(url_for('login'))
     graph = Graph(g.db)
     graphList = graph.listGraphs(session['Customer_ID'])
@@ -91,9 +90,9 @@ def data(Graph_ID):
     graph = Graph(g.db)
     sensors = graph.listSensors(Graph_ID)
     data = []
-    for s in sensors:
-        d = graph.loadData(s['Sensor_ID'],1)
-        data.append({'legend': s['Legend'], 'data': d})
+    for sensor in sensors:
+        dataset = graph.loadData(sensor['Sensor_ID'],1)
+        data.append({'legend': sensor['Legend'], 'data': dataset})
     return jsonify({'data': data})
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -103,15 +102,15 @@ def update():
     value = m.group(1)
     unit = m.group(2)
     #print ("Unit: "+str(unit)+"  Temp: "+str(value), file=sys.stderr)
-    d = Data(g.db)
-    unit=800;
-    d.insert(unit,unit,value)
+    data = Data(g.db)
+    unit=800
+    data.insert(unit,unit,value)
     # Flask is unhappy if we don't return *something*
-    return 'Done!';
+    return 'Done!'
 
-from werkzeug.debug import DebuggedApplication
-app.wsgi_app = DebuggedApplication( app.wsgi_app, True )
+#from werkzeug.debug import DebuggedApplication
+#app.wsgi_app = DebuggedApplication( app.wsgi_app, True )
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=8088, debug=True)
+    app.run(host='0.0.0.0', port=8088, debug=True)
 

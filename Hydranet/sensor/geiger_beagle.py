@@ -1,15 +1,14 @@
 #!/usr/bin/python
 
+import time
 import Adafruit_BBIO.ADC as ADC
 import Adafruit_BBIO.GPIO as GPIO
-import os
-import time
-import hydranet
+import Hydranet
 
 #AIN0 13.8v batery  Pin 39
 #AIN1 18v pannels   Pin 40
 #AIN3 13.8v current sensor Pin 38
-#AIN2 20A current sensor pin 37 
+#AIN2 20A current sensor pin 37
 #GPIO7 Geiger Counter pin 42
 #GPIO60 Temperature pin 12
 
@@ -26,6 +25,7 @@ GPIO.setup("P9_42",GPIO.IN)
 GPIO.add_event_detect("P9_42", GPIO.RISING, callback=increaseCount)
 
 try:
+    value = 0
     while True:
         if secondCounter > 60 :
             #average readings and send them to HydraNetServer
