@@ -1,10 +1,13 @@
   jQuery('.hydranet_chart svg').each(function(i) {
-    var graph_id = jQuery(this).data('id');
-    var width = jQuery(this).data('width') || 650;
-    var height = jQuery(this).data('height') || 300;
-    var titleX = jQuery(this).data('xtitle') || '';
-    var titleY = jQuery(this).data('ytitle') || '';
-    var id = this;
+//    var id = this;
+//    drawChart(id, 1);
+  });
+
+
+function drawChart(id, period, loading) {
+    var graph_id = jQuery(id).data('id');
+    var titleX = jQuery(id).data('xtitle') || '';
+    var titleY = jQuery(id).data('ytitle') || '';
 
   nv.addGraph(function() {
   var chart = nv.models.lineChart()
@@ -19,7 +22,11 @@
 
   chart.xAxis     //Chart x-axis settings
       .axisLabel(titleX)
-      .tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d)); });
+      .tickFormat(function(d) { 
+          fmt = '%H:%M';
+          if (period>1) { fmt = '%d/%m'; }
+          return d3.time.format(fmt)(new Date(d)); 
+      });
 
   chart.yAxis     //Chart y-axis settings
       .axisLabel(titleY)
@@ -29,7 +36,7 @@
 
     var graphData = [];
 
-    d3.json("/data/"+graph_id, function(error, json) {
+    d3.json("/data/"+graph_id+"/"+period, function(error, json) {
         if (error) throw error;
         var series = json.data;
 
@@ -43,7 +50,7 @@
         });
 
 
-        d3.select(id)    //Select the <svg> element you want to render the chart in.   
+        d3.select("#chart_"+graph_id)    //Select the <svg> element you want to render the chart in.   
             .datum(graphData)         //Populate the <svg> element with chart data...
             .call(chart);          //Finally, render the chart!
 
@@ -54,5 +61,14 @@
   return chart;
 });
 
-});
+}
+
+function showChart(id, period) 
+{
+    //$('#chart_'+id).fadeOut(400);
+    //$('#loading_'+id).show(400);
+    drawChart($('#chart_'+id),period,$('#loading_'+id)); 
+    //$('#loading_'+id).fadeOut(400);
+    //$('#chart_'+id).show(400);
+}
 

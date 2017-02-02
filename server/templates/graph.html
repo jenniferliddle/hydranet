@@ -2,16 +2,59 @@
 
 {% block content %}
 
+<script language="javascript" type="text/javascript" src="/static/js/drawCharts.js"></script>
+
 {% for graph in graphs %}
 	<br/>
-	<fieldset><legend>{{ graph['Title'] }}</legend>
-        <div class='hydranet_chart'>
-            <svg data-id="{{ graph['Graph_ID'] }}" data-xtitle="{{ graph['TitleX'] }}" data-ytitle="{{ graph['TitleY1'] }}">
-        </div>
+	<fieldset style="height: 450;" class="hydranet_chart"><legend>{{ graph['Title'] }}</legend>
+        <table border=0>
+            <tr>
+                <td width=90% height=400>
+                    <!-- <img id="loading_{{ graph['Graph_ID'] }}" src=static/images/loading.gif> -->
+                    <svg id="chart_{{ graph['Graph_ID'] }}"
+                         data-xheight="400" 
+                         data-id="{{ graph['Graph_ID'] }}" 
+                         data-xtitle="{{ graph['TitleX'] }}" 
+                         data-ytitle="{{ graph['TitleY1'] }}">
+                    <script>showChart({{ graph['Graph_ID'] }}, 1); </script>
+                </td>
+                <td style="vertical-align: top;">
+                    <form>
+                        <table border=1>
+                        <tr><td>
+                            <input type="radio" 
+                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   value="1" 
+                                   checked="checked"
+                                   onClick="id={{ graph['Graph_ID'] }}; showChart(id,1);">
+                            Past 24 Hours
+                        </td></tr>
+                        <tr><td>
+                            <input type="radio" 
+                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   onClick="id={{ graph['Graph_ID'] }}; showChart(id,7);">
+                            Past Week
+                        </td></tr>
+                        <tr><td>
+                            <input type="radio" 
+                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   onClick="id={{ graph['Graph_ID'] }}; showChart(id,30);">
+                            Past Month
+                        </td></tr>
+                        <tr><td>
+                            <input type="radio" 
+                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   onClick="id={{ graph['Graph_ID'] }}; showChart(id,365);">
+                            Past Year
+                        </td></tr>
+                        </table>
+                    </form>
+                </td>
+            </tr>
+        </table>
 	</fieldset>
 	<br/>
 
 {% endfor %}
 
-<script language="javascript" type="text/javascript" src="/static/js/drawCharts.js"></script>
 {% endblock %}

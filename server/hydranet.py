@@ -6,6 +6,8 @@ import sys
 import re
 from flask import Flask, g, session, redirect, url_for, request, render_template, jsonify
 from flask.json import JSONEncoder
+
+sys.path.insert(0, '/usr/local/lib/python2.7')
 from Hydranet.db import DB, User, Customer, Graph, Data
 
 app = Flask(__name__, template_folder='/var/www/hydranet/templates', static_folder='/var/www/hydranet/static')
@@ -85,13 +87,13 @@ def graph():
     graphList = graph.listGraphs(session['Customer_ID'])
     return render_template('graph.html',graphs=graphList)
 
-@app.route('/data/<Graph_ID>')
-def data(Graph_ID):
+@app.route('/data/<Graph_ID>/<days>')
+def data(Graph_ID,days=1):
     graph = Graph(g.db)
     sensors = graph.listSensors(Graph_ID)
     data = []
     for sensor in sensors:
-        dataset = graph.loadData(sensor['Sensor_ID'],1)
+        dataset = graph.loadData(sensor['Sensor_ID'],days)
         data.append({'legend': sensor['Legend'], 'data': dataset})
     return jsonify({'data': data})
 

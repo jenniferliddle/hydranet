@@ -12,6 +12,8 @@ from datetime import datetime
 IP = "192.168.2.166"
 UPDATE_PATH = "/cgi/update"
 DATE_FORMAT = "%d-%m-%Y %H:%M:%S"
+PREFIX = "G103_T"
+
 DEBUG = False
 
 """ Update Hydranet. Parameters:
@@ -39,5 +41,5 @@ def update(sensor, value, echo=False):
 if __name__ == "__main__":
     sensor = sys.argv[1]
     temp = sys.argv[2]
-    update(sensor,temp)
+    update(PREFIX+sensor,temp)
 
