@@ -1,5 +1,7 @@
 from __future__ import print_function
 import logging
+import logging.handlers
+import os
 import ConfigParser
 from os.path import expanduser
 import sys
@@ -20,10 +22,27 @@ class CustomJSONEncoder(JSONEncoder):
         else:
             JSONEncoder.default(self, obj)
 
-logging.basicConfig(stream=sys.stderr)
+#
+# Set up logging
+#
+LOG_FILENAME = '/tmp/hydranet.log'
+hlog = logging.getLogger(__name__)
+hlog.setLevel(logging.DEBUG)
+handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=10000, backupCount=3)
+hlog.addHandler(handler)
+hlog.warn('Starting')
+hlog.info(os.environ)
 
+# Check if production or development
+if (os.environ.get('DEV','0') == '1'):
+    configFile = '/home/hydranet/hydranetrc.dev'
+else:
+    configFile = expanduser('~/hydranetrc')
+
+# Read configuration file
 config = ConfigParser.ConfigParser()
-config.read(expanduser('~/hydranetrc'))
+hlog.info("Reading configuration file: '" + configFile + "'")
+config.read(configFile)
 
 # set the secret key.  keep this really secret:
 app.secret_key = 'This needs to be read from the config file'
@@ -42,11 +61,11 @@ def before_request():
     g.db = DB()
     g.db.connect(app.config)
 
-@app.teardown_request
-def teardown_request(exception):
-    db = getattr(g, 'db', None)
-    if db is not None:
-        db.close()
+#@app.teardown_request
+#def teardown_request(exception):
+    #db = getattr(g, 'db', None)
+    #if db is not None:
+        #db.close()
 
 @app.route('/')
 def index():
@@ -97,22 +116,6 @@ def data(Graph_ID,days=1):
         data.append({'legend': sensor['Legend'], 'data': dataset})
     return jsonify({'data': data})
 
-@app.route('/upload', methods=['GET', 'POST'])
-def update():
-    #print(request.form['data'], file=sys.stderr)
-    m=re.search('T(.+)V.*\[(.+)\]',request.form['data'])
-    value = m.group(1)
-    unit = m.group(2)
-    #print ("Unit: "+str(unit)+"  Temp: "+str(value), file=sys.stderr)
-    data = Data(g.db)
-    unit=800
-    data.insert(unit,unit,value)
-    # Flask is unhappy if we don't return *something*
-    return 'Done!'
-
-#from werkzeug.debug import DebuggedApplication
-#app.wsgi_app = DebuggedApplication( app.wsgi_app, True )
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8088, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)
 
