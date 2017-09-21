@@ -2,6 +2,7 @@ from __future__ import print_function
 import logging
 import logging.handlers
 import os
+import time
 import ConfigParser
 from os.path import expanduser
 import sys
@@ -12,8 +13,6 @@ from flask.json import JSONEncoder
 sys.path.insert(0, '/usr/local/lib/python2.7')
 from Hydranet.db import DB, User, Customer, Graph, Data
 
-app = Flask(__name__, template_folder='/var/www/hydranet/templates', static_folder='/var/www/hydranet/static')
-
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, User):
@@ -22,6 +21,14 @@ class CustomJSONEncoder(JSONEncoder):
         else:
             JSONEncoder.default(self, obj)
 
+# dev means we are running under a development environment rather than production
+dev = os.environ.get('DEV','0') == '1'
+
+if dev:
+    app = Flask(__name__, template_folder='/var/www/hydranet_dev/templates', static_folder='/var/www/hydranet_dev/static')
+else:
+    app = Flask(__name__, template_folder='/var/www/hydranet/templates', static_folder='/var/www/hydranet/static')
+
 #
 # Set up logging
 #
@@ -29,19 +36,20 @@ LOG_FILENAME = '/tmp/hydranet.log'
 hlog = logging.getLogger(__name__)
 hlog.setLevel(logging.DEBUG)
 handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=10000, backupCount=3)
+formatter = logging.Formatter('[%(asctime)s] - %(message)s')
+handler.setFormatter(formatter)
 hlog.addHandler(handler)
-hlog.warn('Starting')
+hlog.warn(time.asctime()+' Starting')
 hlog.info(os.environ)
 
-# Check if production or development
-if (os.environ.get('DEV','0') == '1'):
+# Read configuration file
+if dev:
     configFile = '/home/hydranet/hydranetrc.dev'
 else:
     configFile = expanduser('~/hydranetrc')
 
-# Read configuration file
 config = ConfigParser.ConfigParser()
-hlog.info("Reading configuration file: '" + configFile + "'")
+hlog.info(time.asctime()+" Reading configuration file: '" + configFile + "'")
 config.read(configFile)
 
 # set the secret key.  keep this really secret:
