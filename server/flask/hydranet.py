@@ -1,3 +1,9 @@
+#
+# This is the main hydranet Flask application
+#
+# It is called from /var/www/hydranet/wsgi.py and typically lives in /usr/local/bin
+#
+#
 from __future__ import print_function
 import logging
 import logging.handlers
@@ -64,6 +70,20 @@ app.config['database'] = config.get(dbname, 'database')
 # Now tell Flask to use the custom class
 app.json_encoder = CustomJSONEncoder
 
+@app.errorhandler(500)
+def internal_server_error(e):
+    hlog.error('Server Error: %s', (e))
+    return render_template('500.html',error=(e)), 500
+
+@app.errorhandler(Exception)
+def unhandled_exception(e):
+    hlog.error('Unhandled Exception: %s', (e))
+    return render_template('500.html',error=(e)), 500
+
+
+#
+# Before we action any request, we connect to the database
+#
 @app.before_request
 def before_request():
     g.db = DB()
@@ -75,12 +95,18 @@ def before_request():
     #if db is not None:
         #db.close()
 
+#
+# The main page takes you to the graphs, or the login page
+#
 @app.route('/')
 def index():
     if 'username' in session:
         return redirect(url_for('graph'))
     return redirect(url_for('login'))
 
+#
+# Logging in
+#
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     msg = ''
@@ -93,19 +119,24 @@ def login():
             if u.validate(request.form['password']):
                 session['username'] = u.row['Forename'] + ' ' + u.row['Surname']
                 session['user'] = u
-                customers=u.loadCustomers()
-                session['Customer_ID']=customers['Customer_ID']
-                return redirect(url_for('index'))
+                customer=u.getCustomer()
+                session['Customer_ID']=customer.row['Customer_ID']
             else:
                 msg = 'invalid password'
     return render_template('login.html', error=msg)
 
+#
+# Logout
+#
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('index'))
 
+#
+# Display all graphs for the current user
+#
 @app.route('/graph', methods=['GET', 'POST'])
 def graph():
     if 'username' not in session:
@@ -114,6 +145,9 @@ def graph():
     graphList = graph.listGraphs(session['Customer_ID'])
     return render_template('graph.html',graphs=graphList)
 
+#
+# Display a particular graph for a specified date range
+#
 @app.route('/data/<Graph_ID>/<days>')
 def data(Graph_ID,days=1):
     graph = Graph(g.db)

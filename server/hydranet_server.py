@@ -10,6 +10,10 @@ from os.path import expanduser
 import json
 import ConfigParser
 import daemon
+import logging
+import logging.handlers
+import time
+import os
 
 sys.path.insert(0, '/usr/local/lib/python2.7')
 from Hydranet.db import DB, Data
@@ -37,10 +41,12 @@ def update(msg):
         The values are expected to be
         sensor      the Sensor_ID
         value       an integer or float value
+        date        an asctime() string
     '''
     db = openDatabase()
     data = Data(db)
-    data.insert(msg['sensor'],msg['sensor'], msg['value'])
+    msg.setdefault('date','')
+    data.insert(msg['sensor'],msg['sensor'], msg['value'], msg['date'])
     closeDatabase(db)
 
 def on_message(channel, method_frame, header_frame, body):
@@ -72,8 +78,25 @@ def start_process():
         channel.stop_consuming()
 
 if __name__ == "__main__":
+    #
+    # Set up logging
+    #
+    LOG_FILENAME = '/tmp/hydranet.log'
+    hlog = logging.getLogger(__name__)
+    hlog.setLevel(logging.DEBUG)
+    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=10000, backupCount=3)
+    formatter = logging.Formatter('[%(asctime)s] - %(message)s')
+    handler.setFormatter(formatter)
+    hlog.addHandler(handler)
+    hlog.warn(time.asctime()+' Starting hydranet_server')
+    hlog.info(os.environ)
+
     # Loop to process messages
-    c = daemon.DaemonContext()
+    c = daemon.DaemonContext(
+        stdout=open(LOG_FILENAME, 'w+'),
+        stderr=open(LOG_FILENAME, 'w+'),
+        umask=0o002,
+    )
     with c:
         start_process()
 

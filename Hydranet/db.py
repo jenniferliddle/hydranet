@@ -64,7 +64,7 @@ class Data(object):
     def __init__(self,db):
         self.con = db.con
 
-    def insert(self,unit,sensor,value):
+    def insert(self,unit,sensor,value,date):
         "Add some data"
         c = self.con.cursor(mdb.cursors.DictCursor)
         c.execute('insert into Data (Sensor_ID,Value) values (%s,%s)', (sensor,value))

@@ -7,6 +7,8 @@ Author: Jennifer Liddle <jennifer@jsquared.co.uk>
 '''
 import pika
 import json
+import time
+import datetime
 
 class Messenger(object):
     ''' Class to wrap pika for sending messages'''
@@ -27,6 +29,8 @@ class Messenger(object):
 
     def update(self, sensor, value):
         ''' send sensor update to hydranet '''
-        body = json.dumps({'command':'update', 'sensor': sensor, 'value': value})
+        ts = time.time()
+        timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        body = json.dumps({'command':'update', 'sensor': sensor, 'value': value, 'date': timestamp})
         self.send(body)
 
