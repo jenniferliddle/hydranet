@@ -5,20 +5,26 @@ from os.path import expanduser, isfile
 from glob import glob
 
 import re
-from hydranet.configuration import Config
-from hydranet.messaging import update
+from Hydranet.configuration import Config
+from Hydranet.messenger import Messenger
 
 # CONSTANTS
 COUNT_KEY = "count"
 
+local = False
 # parse command line
-if len(argv) < 2 or argv[1] != "-u":
-	print "DEBUG: to update Hydranet, run %s -u" % argv[0]
+if (len(argv)>1 and argv[1]=='-l'):
+    local = True
 
 # parse config file
 config = Config()
 
-# get a temperature reading from the sensor
+'''
+    Get a temperature reading from a one-wire sensor
+    The reading is in the format:
+        2c 01 4b 46 7f ff 04 10 14 : crc=14 YES
+        2c 01 4b 46 7f ff 04 10 14 t=18750
+'''
 def read_temperature(device_path):
 	while True:
 		with open(device_path, "rb") as f:
@@ -26,10 +32,13 @@ def read_temperature(device_path):
 		if "YES" in lines[0]:
 			return float(lines[1].split("=")[1]) / 1000
 
-# iterate devices
+'''
+    Look for devices in the configuration file, and process
+    them one at a time...
+'''
 sections = config.sections()
 for section in sections:
-    print "Section:", section
+    #print "Section:", section
     if (re.match('Sensor_', section)):
         sensor_type = config.getint(section, 'Type')
         if (sensor_type == 500):
@@ -38,4 +47,8 @@ for section in sections:
         if (sensor_type == 304):
             "This is a one-wire temperature sensor"
             temperature = read_temperature(config.get(section, 'device_path'))
-            update(config.getint(section,'ID'), temperature, echo=True)
+            if local:
+                print config.getint(section,'ID'), temperature
+            else:
+                m = Messenger()
+                m.update(config.getint(section,'ID'), temperature)

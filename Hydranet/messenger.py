@@ -12,11 +12,14 @@ import datetime
 
 class Messenger(object):
     ''' Class to wrap pika for sending messages'''
-    def __init__(self, host='localhost', queue='hydranet'):
-        '''Initialise pika, providing defaults for host and queue'''
+    def __init__(self, host='192.168.2.230', queue='hydranet'):
+        '''Initialise pika, providing defaults for host and queue
+           TODO: host *must* be read from config file, not hard coded
+        '''
+        credentials = pika.PlainCredentials('hydranet', 'hydranet')
         self.host = host
         self.queue = queue
-        self.con = pika.BlockingConnection(pika.ConnectionParameters(self.host))
+        self.con = pika.BlockingConnection(pika.ConnectionParameters(self.host,5672,'/',credentials))
         self.channel = self.con.channel()
 
     def __del__(self):
