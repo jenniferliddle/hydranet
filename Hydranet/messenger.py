@@ -30,10 +30,11 @@ class Messenger(object):
         ''' Send raw text to the Hydranet server '''
         self.channel.basic_publish('',self.queue, body)
 
-    def update(self, sensor, value):
+    def update(self, sensor, value, timestamp=None):
         ''' send sensor update to hydranet '''
-        ts = time.time()
-        timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        if timestamp == None:
+            ts = time.time()
+            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         body = json.dumps({'command':'update', 'sensor': sensor, 'value': value, 'date': timestamp})
         self.send(body)
 

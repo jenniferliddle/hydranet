@@ -46,6 +46,7 @@ def update(msg):
     db = openDatabase()
     data = Data(db)
     msg.setdefault('date','')
+    print "Inserting data: ", msg['sensor'],msg['sensor'], msg['value'], msg['date']
     data.insert(msg['sensor'],msg['sensor'], msg['value'], msg['date'])
     closeDatabase(db)
 
@@ -93,8 +94,8 @@ if __name__ == "__main__":
 
     # Loop to process messages
     c = daemon.DaemonContext(
-        stdout=open(LOG_FILENAME, 'w+'),
-        stderr=open(LOG_FILENAME, 'w+'),
+        stdout=open(LOG_FILENAME, 'a', 0),
+        stderr=open(LOG_FILENAME, 'a', 0),
         umask=0o002,
     )
     with c:
