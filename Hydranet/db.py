@@ -67,7 +67,7 @@ class Data(object):
     def insert(self,unit,sensor,value,date):
         "Add some data"
         c = self.con.cursor(mdb.cursors.DictCursor)
-        c.execute('insert into Data (Sensor_ID,Value) values (%s,%s)', (sensor,value))
+        c.execute('insert into Data (Sensor_ID,Value,Reading_Date) values (%s,%s)', (sensor,value,date))
         self.con.commit()
 
 class Graph(object):
