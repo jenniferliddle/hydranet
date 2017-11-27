@@ -16,8 +16,6 @@ Note that it has to run as root in order to acces
 the serial port.
 '''
 import sys
-sys.path.insert(0, '/usr/local/lib/python2.7')
-
 import re
 import serial
 import time

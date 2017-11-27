@@ -16,7 +16,6 @@ import re
 from flask import Flask, g, session, redirect, url_for, request, render_template, jsonify
 from flask.json import JSONEncoder
 
-sys.path.insert(0, '/usr/local/lib/python2.7')
 from Hydranet.db import DB, User, Customer, Graph, Data
 
 class CustomJSONEncoder(JSONEncoder):

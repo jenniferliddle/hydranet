@@ -15,7 +15,6 @@ import logging.handlers
 import time
 import os
 
-sys.path.insert(0, '/usr/local/lib/python2.7')
 from Hydranet.db import DB, Data
 
 def openDatabase():

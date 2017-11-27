@@ -11,7 +11,6 @@ import sys
 import os
 
 sys.path.insert(0, '/usr/local/bin')
-sys.path.insert(0, '/usr/local/lib/python2.7')
 
 os.environ['DEV'] = '1'
 
