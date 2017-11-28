@@ -120,6 +120,7 @@ def login():
                 session['user'] = u
                 customer=u.getCustomer()
                 session['Customer_ID']=customer.row['Customer_ID']
+                return redirect(url_for('index'))
             else:
                 msg = 'invalid password'
     return render_template('login.html', error=msg)
