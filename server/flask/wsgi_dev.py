@@ -14,4 +14,4 @@ sys.path.insert(0, '/usr/local/bin')
 
 os.environ['DEV'] = '1'
 
-from hydranet import app as application
+from hydranet_dev import app as application
