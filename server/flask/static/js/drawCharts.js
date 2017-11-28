@@ -46,7 +46,7 @@ function drawChart(id, period, loading) {
                 values.push({x: s[0]*1000, y: s[1]});
             });
 
-            graphData.push({values: values, key: d.legend});
+            graphData.push({values: values, key: d.legend, color: d.colour});
         });
 
 

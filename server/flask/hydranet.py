@@ -155,7 +155,7 @@ def data(Graph_ID,days=1):
     data = []
     for sensor in sensors:
         dataset = graph.loadData(sensor['Sensor_ID'],days)
-        data.append({'legend': sensor['Legend'], 'data': dataset})
+        data.append({'colour': sensor['Colour'], 'legend': sensor['Legend'], 'data': dataset})
     return jsonify({'data': data})
 
 if __name__ == '__main__':
