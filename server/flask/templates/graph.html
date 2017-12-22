@@ -16,14 +16,14 @@
                          data-id="{{ graph['Graph_ID'] }}" 
                          data-xtitle="{{ graph['TitleX'] }}" 
                          data-ytitle="{{ graph['TitleY1'] }}">
-                    <script>showChart({{ graph['Graph_ID'] }}, 1); </script>
                 </td>
                 <td style="vertical-align: top;">
                     <form>
                         <table border=1>
                         <tr><td>
                             <input type="radio" 
-                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   id="Period_{{ graph['Graph_ID'] }}" 
+                                   name="Period_{{ graph['Graph_ID'] }}" 
                                    value="1" 
                                    checked="checked"
                                    onClick="id={{ graph['Graph_ID'] }}; showChart(id,1);">
@@ -31,27 +31,49 @@
                         </td></tr>
                         <tr><td>
                             <input type="radio" 
-                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   value="7"
+                                   id="Period_{{ graph['Graph_ID'] }}" 
+                                   name="Period_{{ graph['Graph_ID'] }}" 
                                    onClick="id={{ graph['Graph_ID'] }}; showChart(id,7);">
                             Past Week
                         </td></tr>
                         <tr><td>
                             <input type="radio" 
-                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   value="30"
+                                   id="Period_{{ graph['Graph_ID'] }}" 
+                                   name="Period_{{ graph['Graph_ID'] }}" 
                                    onClick="id={{ graph['Graph_ID'] }}; showChart(id,30);">
                             Past Month
                         </td></tr>
                         <tr><td>
                             <input type="radio" 
-                                   name="{{ ['Graph_ID'] }}_Period" 
+                                   value="365"
+                                   name="Period_{{ graph['Graph_ID'] }}" 
                                    onClick="id={{ graph['Graph_ID'] }}; showChart(id,365);">
                             Past Year
+                        </td></tr>
+                        <tr><td>
+                            <label id="last_update_{{ graph['Graph_ID'] }}"></label>
                         </td></tr>
                         </table>
                     </form>
                 </td>
             </tr>
         </table>
+        <script>
+            function reshowGraph_{{ graph['Graph_ID'] }}() {
+            var x = $('#Period_{{ graph['Graph_ID'] }}');
+            var v = x.val();
+            showChart({{ graph['Graph_ID'] }}, $('#Period_{{ graph['Graph_ID'] }}').val());
+            var dt = new Date();
+            var ds = "Updated " + dt.getHours() + ":" + dt.getMinutes();
+            $('#last_update_{{ graph['Graph_ID'] }}').text(ds);
+            }
+            // update graph once per minute
+            reshowGraph_{{ graph['Graph_ID'] }}();
+            setInterval(reshowGraph_{{ graph['Graph_ID'] }}, 60000);
+        </script>
+
 	</fieldset>
 	<br/>
 
