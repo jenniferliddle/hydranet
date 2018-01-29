@@ -15,6 +15,7 @@ drop table Sensor;
 drop table Unit;
 drop table Customer;
 drop table Sensor_Type;
+drop table Alert;
 
 -- 
 -- Create the Customer table
@@ -154,4 +155,21 @@ create table Graph_Sensor (
 engine = InnoDB;
 alter table Graph_Sensor add constraint foreign key (Sensor_ID) references Sensor(Sensor_ID);
 alter table Graph_Sensor add constraint foreign key (Graph_ID) references Graph(Graph_ID);
+
+-- 
+-- create Alert table
+--
+select 'Creating Alert table';
+create table Alert (
+    Alert_ID serial,
+    Sensor_ID bigint(20) unsigned not null,
+    User_ID bigint(20) unsigned not null,
+    Minmax varchar(3) not null,
+    Value double not null,
+    Text varchar(1024),
+    Primary Key (Alert_ID)
+)
+engine = InnoDB;
+alter table Alert add constraint foreign key (Sensor_ID) references Sensor(Sensor_ID);
+alter table Alert add constraint foreign key (User_ID) references User(User_ID);
 
