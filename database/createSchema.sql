@@ -167,6 +167,7 @@ create table Alert (
     Minmax varchar(3) not null,
     Value double not null,
     Text varchar(1024),
+    Period int default 0,
     Primary Key (Alert_ID)
 )
 engine = InnoDB;
