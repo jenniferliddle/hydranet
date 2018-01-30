@@ -50,5 +50,5 @@ for section in sections:
             if local:
                 print config.getint(section,'ID'), temperature
             else:
-                m = Messenger()
+                m = Messenger("jtwo.org")
                 m.update(config.getint(section,'ID'), temperature)

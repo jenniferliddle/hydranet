@@ -9,6 +9,7 @@ import pika
 import json
 import time
 import datetime
+import os
 
 class Messenger(object):
     ''' Class to wrap pika for sending messages'''
@@ -19,7 +20,17 @@ class Messenger(object):
         credentials = pika.PlainCredentials('hydranet', 'hydranet')
         self.host = host
         self.queue = queue
-        self.con = pika.BlockingConnection(pika.ConnectionParameters(self.host,5672,'/',credentials))
+        tries = 5
+        while tries > 0:
+            try:
+                self.con = pika.BlockingConnection(pika.ConnectionParameters(self.host,5672,'/',credentials))
+                tries = 0
+            except:
+                tries = tries - 1
+                if tries == 0:
+                    print "Connection to server failed"
+                    os._exit(1)
+                time.sleep(60)
         self.channel = self.con.channel()
 
     def __del__(self):
