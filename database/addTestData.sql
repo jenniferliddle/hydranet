@@ -12,6 +12,7 @@ delete from Sensor;
 delete from Unit;
 delete from Customer;
 delete from Sensor_Type;
+delete from Alert;
 
 insert into Customer (Customer_ID, Name, Abbreviation, Contact_Name, Contact_Email) 
        values(101,'J-Squared Limited', 'J2', 'Jennifer Liddle', 'jennifer@jsquared.co.uk');
@@ -109,6 +110,9 @@ insert into Graph_Sensor (Graph_Sensor_ID, Graph_ID, Sensor_ID, Colour, Legend) 
 insert into Graph_Sensor (Graph_Sensor_ID, Graph_ID, Sensor_ID, Colour, Legend) values(4,2,501,'#0000ff','Solar Water Feed');
 insert into Graph_Sensor (Graph_Sensor_ID, Graph_ID, Sensor_ID, Colour, Legend) values(5,2,502,NULL,'Boiler');
 
+insert into Alert values(1,500,105,'min',15,'It is cold',0);
+insert into Alert values(2,500,105,'max',27,'It is too hot',0);
+insert into Alert values(3,600,108,'max',50000,'Power Surge!',0);
 
 
 
