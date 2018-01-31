@@ -174,3 +174,17 @@ engine = InnoDB;
 alter table Alert add constraint foreign key (Sensor_ID) references Sensor(Sensor_ID);
 alter table Alert add constraint foreign key (User_ID) references User(User_ID);
 
+-- 
+-- create Alerts_Sent table
+--
+select 'Creating Alerts_Sent table';
+create table Alerts_Sent (
+    Alerts_Sent_ID serial,
+    Alert_ID bigint(20) unsigned not null,
+    Date_Sent timestamp not null,
+    Primary Key (Alerts_Sent_ID)
+)
+engine = InnoDB;
+alter table Alerts_Sent add constraint foreign key (Alert_ID) references Alert(Alert_ID);
+
+
