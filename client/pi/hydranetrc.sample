@@ -1,0 +1,23 @@
+#
+# A sample hydranetrc file
+#
+
+[Server]
+URL: hydranet.co.uk
+
+[Client]
+ID: 500
+Name: Evil Lair
+
+[Sensor_1]
+ID: 930
+Type: 304
+Update: 600
+device_path: /sys/bus/w1/devices/28-000006087e4f/w1_slave
+
+[Sensor_2]
+ID: 931
+Type: 304
+Update: 600
+device_path: /sys/bus/w1/devices/28-00000608bcd8/w1_slave
+
