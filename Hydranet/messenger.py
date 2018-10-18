@@ -13,7 +13,7 @@ import os
 
 class Messenger(object):
     ''' Class to wrap pika for sending messages'''
-    def __init__(self, host='192.168.2.230', queue='hydranet'):
+    def __init__(self, host='jtwo.org', queue='hydranet'):
         '''Initialise pika, providing defaults for host and queue
            TODO: host *must* be read from config file, not hard coded
         '''
