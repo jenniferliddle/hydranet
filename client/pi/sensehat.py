@@ -9,19 +9,23 @@
 # GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 #
 from sense_hat import SenseHat
+import Hydranet.messenger
 import time
 import os
 
 ALPHA = 0.5
-PERIOD = 60 * 30
+PERIOD_BUMP = 60 * 30
+PERIOD_UPDATE = 60 * 10
 
 BLACK = [0,0,0]
 RED = [255,64,64]
 GREEN = [64,255,64]
 BLUE = [64,64,255]
 
-global checkpoint
-checkpoint = time.time()
+global checkpoint_bump
+checkpoint_bump = time.time()
+global checkpoint_update
+checkpoint_update = time.time()
 
 sense = SenseHat()
 graph = {}
@@ -41,12 +45,12 @@ graph['pressure']['offset'] = 900
 graph['pressure']['scale'] = 50
 
 def bump_graph():
-    global checkpoint
+    global checkpoint_bump
     for sensor in (graph):
         d = graph[sensor]['data']
         d.pop(0)
         d.append(0)
-    checkpoint = time.time()
+    checkpoint_bump = time.time()
 
 def save_value(sensor, v):
     x = sensor['data'].pop()
@@ -110,18 +114,24 @@ def display_barchart(sensor, colour):
 
 def display_things(t, p, h):
     global graph
-    sense.show_message(str(int(t+0.5))+" C",.1,RED)
+    sense.show_message(str(int(t+0.5)),.1,RED)
     display_barchart(graph['temperature'],RED)
-    sense.show_message(str(int(h+0.5))+" %",.1,BLUE)
-    display_barchart(graph['humidity'],BLUE)
-    sense.show_message(str(int(p+0.5))+" ",.1,GREEN)
-    display_barchart(graph['pressure'],GREEN)
+#    sense.show_message(str(int(h+0.5))+" %",.1,BLUE)
+#    display_barchart(graph['humidity'],BLUE)
+#    sense.show_message(str(int(p+0.5))+" ",.1,GREEN)
+#    display_barchart(graph['pressure'],GREEN)
 
 while True:
     temperature = get_temperature()
     pressure = get_pressure()
     humidity = get_humidity()
     display_things(temperature, pressure, humidity)
-    if (time.time() - checkpoint) > PERIOD:
+    if (time.time() - checkpoint_bump) > PERIOD_BUMP:
         bump_graph()
+    if (time.time() - checkpoint_update) > PERIOD_UPDATE:
+        M = Hydranet.messenger.Messenger()
+        M.update(913, temperature)
+        M.update(914, humidity)
+        M.update(915, pressure)
+        checkpoint_update = time.time()
 

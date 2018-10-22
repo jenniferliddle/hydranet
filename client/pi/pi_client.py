@@ -3,10 +3,15 @@
 from sys import argv, stderr
 from os.path import expanduser, isfile
 from glob import glob
-
+import time
 import re
 from Hydranet.configuration import Config
 from Hydranet.messenger import Messenger
+
+try:
+    import pyfirmata
+except:
+    print "pyfrmata not supported"
 
 # CONSTANTS
 COUNT_KEY = "count"
@@ -38,17 +43,40 @@ def read_temperature(device_path):
 '''
 sections = config.sections()
 for section in sections:
-    #print "Section:", section
+    print "Section:", section
     if (re.match('Sensor_', section)):
         sensor_type = config.getint(section, 'Type')
+
         if (sensor_type == 500):
             "This is a switch"
             pass
+
         if (sensor_type == 304):
             "This is a one-wire temperature sensor"
             temperature = read_temperature(config.get(section, 'device_path'))
             if local:
                 print config.getint(section,'ID'), temperature
             else:
-                m = Messenger("jtwo.org")
+                m = Messenger("hydranet.co.uk")
                 m.update(config.getint(section,'ID'), temperature)
+
+        if (sensor_type == 504):
+            "Arduino Firmata Voltage reader"
+            device = config.get(section, 'device_path')
+            board = pyfirmata.Arduino(device)
+            pin = board.get_pin('a:0:i')
+            pin.enable_reporting()
+            it = pyfirmata.util.Iterator(board)
+            it.start()
+            time.sleep(1)
+            v = pin.read()
+            if v is not None:
+                if local:
+                    print v * 52.0, "V"
+                else:
+                    m = Messenger("hydranet.co.uk")
+                    m.update(config.getint(section,'ID'), 52.0 * v)
+            board.exit()
+
+        if (sensor_type == 505):
+            print "This is sensor 505"
