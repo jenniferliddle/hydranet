@@ -14,7 +14,8 @@ import logging
 import logging.handlers
 import time
 import os
-
+import smtplib
+from email.mime.text import MIMEText
 from Hydranet.db import DB, Data
 
 def openDatabase():

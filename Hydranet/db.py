@@ -6,6 +6,8 @@ A set of classes to represent records from the Hydranet database
 
 import hashlib
 import MySQLdb as mdb
+import time
+import datetime
 
 class Customer(object):
     "Class to represent a Customer record"
@@ -59,6 +61,18 @@ class User(object):
         customer.load(rows['Customer_ID'])
         return customer
 
+class Sensor(object):
+    "Class to represent a Sensor"
+    def __init__(self,db):
+        self.con = db.con
+
+    def load(self, id):
+        "Load a Sensor object given a sensor ID"
+        c = self.con.cursor(mdb.cursors.DictCursor)
+        c.execute('select * from Sensor there Sensor_ID = %s', (id,))
+        self.row = c.fetchone()
+        return self.row
+
 class Data(object):
     "Class to represent a data record"
     def __init__(self,db):
@@ -69,6 +83,28 @@ class Data(object):
         c = self.con.cursor(mdb.cursors.DictCursor)
         c.execute('insert into Data (Sensor_ID,Value,Reading_Date) values (%s,%s,%s)', (sensor,value,date))
         self.con.commit()
+
+    def loadPeriod(self,sensor_id,interval):
+        "Load data for a given sensor ID and interval (in minutes)"
+        c = self.con.cursor()
+        sql = '''select unix_timestamp(Reading_Date), value
+                                     from Data 
+                                    where Sensor_ID = %s 
+                                      and Reading_Date > (now() - interval %s minute)
+                                 order by Reading_Date'''
+        c.execute(sql,(sensor_id,interval))
+        return c.fetchall()
+
+    def loadLatest(self, sensor_id):
+        "Load the latest reading for a given sensor"
+        c = self.con.cursor()
+        sql = "select max(Data_ID) from Data where Sensor_ID = %s"
+        c.execute(sql, (sensor_id,))
+        row = c.fetchone()
+        sql = "select * from Data where Data_ID = %s"
+        c.execute(sql, (row[0],))
+        self.row = c.fetchone()
+        return self.row
 
 class Graph(object):
     "Class to represent a Graph record"
@@ -106,6 +142,43 @@ class Graph(object):
         c.execute(sql,(sensor_id,interval))
         return c.fetchall()
 
+class Alert(object):
+    "Class to represent an alert"
+    def __init__(self, db):
+        self.con = db.con
+
+    def load(self,id):
+        "Load an alert object given an alert ID"
+        c = self.con.cursor(mdb.cursors.DictCursor)
+        c.execute('select * from Alert where Alert_ID = %s', (id,))
+        self.row = c.fetchone()
+        return self.row
+
+    def loadBySensor(self, id):
+        "Find all the alerts for a given sensor"
+        c = self.con.cursor(mdb.cursors.DictCursor)
+        c.execute('select * from Alert where Sensor_ID = %s', (id,))
+        return c.fetchall()
+
+    def loadAll(self):
+        "Find all the alerts"
+        c = self.con.cursor(mdb.cursors.DictCursor)
+        c.execute('select * from Alert', ())
+        return c.fetchall()
+
+class Alerts_Sent(object):
+    "Class to represent an alerts_sent record"
+    def __init__(self, db):
+        self.con = db.con
+
+    def insert(self,id):
+        "Add new Alerts_Sent record"
+        ts = time.time()
+        timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        c = self.con.cursor(mdb.cursors.DictCursor)
+        c.execute('insert into Data (Alert_ID,Date_Sent) values (%s,%s)', (id,timestamp))
+        self.con.commit()
+        
 class DB(object):
     "Class to represent a database object"
     def __init__(self):
