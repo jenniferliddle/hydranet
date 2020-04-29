@@ -10,5 +10,34 @@ user: test_user
 password: test
 database: Hydranet_Test
 
-[Main]
+[Sensor_1]
+Type: 304
+device_path: /sys/bus/w1/devices/28-000001994c38/w1_slave
+ID: 500
+
+[Sensor_2]
+Type: 304
+device_path: /sys/bus/w1/devices/28-000001f03bc6/w1_slave
+ID: 501
+
+[Sensor_3]
+Type: 304
+device_path: /sys/bus/w1/devices/28-000001f050a8/w1_slave
+ID: 502
+
+[Sensor_4]
+Type: 304
+device_path: /sys/bus/w1/devices/28-00000537dabb/w1_slave
+ID: 910
+
+[Sensor_5]
+Type: 304
+device_path: /sys/bus/w1/devices/28-00000537fbfe/w1_slave
+ID: 911
+
+[Sensor_6]
+Type: 304
+device_path: /sys/bus/w1/devices/28-000005387565/w1_slave
+ID: 912
+
 
