@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+import setuptools
 
-setup(name='Hydranet',
+setuptools.setup(name='Hydranet',
       version='0.1',
       description='Hydranet Telemetry System',
       author='Jennifer Liddle',
       author_email='jennifer@jsquared.co.uk',
       url='http://hydranet.co.uk',
-      packages=['Hydranet'],
+      packages=setuptools.find_packages(),
+      install_requires=['pika'],
      )
 
