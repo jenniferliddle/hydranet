@@ -13,6 +13,16 @@ try:
 except:
     print "pyfrmata not supported"
 
+try:
+    from bme280 import BME280
+except:
+    print "BME280 not supported"
+
+try:
+    from smbus2 import SMBus
+except ImportError:
+    from smbus import SMBus
+
 # CONSTANTS
 COUNT_KEY = "count"
 
@@ -77,6 +87,20 @@ for section in sections:
                     m = Messenger("hydranet.co.uk")
                     m.update(config.getint(section,'ID'), 52.0 * v)
             board.exit()
+
+        if (sensor_type == 610):
+            "BME280 humidity"
+            bus = SMBus(1)
+            bme280 = BME280(i2c_dev=bus)
+            humidity_prev = -1
+            humidity = bme280.get_humidity()
+            while (int(humidity*10) != int(humidity_prev*10)):
+                time.sleep(1)
+                humidity_prev = humidity
+                humidity = bme280.get_humidity()
+
+            m = Messenger("hydranet.co.uk")
+            m.update(config.getint(section,'ID'), humidity)
 
         if (sensor_type == 505):
             print "This is sensor 505"
